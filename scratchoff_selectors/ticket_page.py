@@ -1,5 +1,5 @@
 GENERAL_LEVEL_SELECTORS = {
-    "table_row": "tr.row-rounded",
+    "table_row": "//tbody/tr[contains(@class, 'row-rounded')]",
     "game_name": "th a span",
     "game_link": "th a",
     "top_prize": "td:nth-of-type(1)",
