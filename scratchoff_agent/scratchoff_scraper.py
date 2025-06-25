@@ -1,7 +1,8 @@
-from playwright.async_api import async_playwright
 import os
-from scratchoff_selectors.ticket_page import GENERAL_LEVEL_SELECTORS, PAGE_LEVEL_SELECTORS
+from urllib.parse import urlparse, parse_qs
 from dotenv import load_dotenv
+from playwright.async_api import async_playwright
+from scratchoff_selectors.ticket_page import GENERAL_LEVEL_SELECTORS, PAGE_LEVEL_SELECTORS
 
 load_dotenv()
 
@@ -14,12 +15,15 @@ async def extract_overall_odds(page) -> str:
 
 async def fetch_scratchoff_data(refresh: bool = False) -> list:
     all_data = []
-
     async with async_playwright() as p:
         browser = await p.chromium.launch(headless=True)
         page = await browser.new_page()
 
-        await page.goto(os.getenv("SCRATCHOFF_BASE_URL"))
+        base_url = os.getenv("SCRATCHOFF_BASE_URL")
+        if not base_url:
+            raise EnvironmentError("SCRATCHOFF_BASE_URL not set in environment variables.")
+
+        await page.goto(base_url)
         await page.wait_for_selector(GENERAL_LEVEL_SELECTORS["table_row"])
 
         rows = await page.query_selector_all(GENERAL_LEVEL_SELECTORS["table_row"])
@@ -28,40 +32,54 @@ async def fetch_scratchoff_data(refresh: bool = False) -> list:
         for row in rows:
             game_data = {}
 
-            # Game name and link
-            link_el = await row.query_selector(GENERAL_LEVEL_SELECTORS["game_link"])
-            if link_el:
-                game_data["name"] = (await link_el.inner_text()).strip()
-                href = await link_el.get_attribute("href")
-                if href:
-                    full_url = href if href.startswith("http") else f"https://floridalottery.com{href}"
-                    game_data["url"] = full_url
+            try:
+                # Game name and link
+                link_el = await row.query_selector(GENERAL_LEVEL_SELECTORS["game_link"])
+                if link_el:
+                    game_data["name"] = (await link_el.inner_text()).strip()
+                    href = await link_el.get_attribute("href")
+                    if href:
+                        full_url = href if href.startswith("http") else f"https://floridalottery.com{href}"
+                        game_data["url"] = full_url
 
-            # Ticket price
-            price_el = await row.query_selector(GENERAL_LEVEL_SELECTORS["ticket_price"])
-            if price_el:
-                game_data["ticket_price"] = (await price_el.inner_text()).strip()
+                        # Extract ID from URL
+                        parsed_url = urlparse(full_url)
+                        game_id = parse_qs(parsed_url.query).get("id", [None])[0]
+                        game_data["id"] = game_id
 
-            # Top prize
-            top_prize_el = await row.query_selector(GENERAL_LEVEL_SELECTORS["top_prize"])
-            if top_prize_el:
-                game_data["top_prize"] = (await top_prize_el.inner_text()).strip()
+                # Ticket price
+                price_el = await row.query_selector(GENERAL_LEVEL_SELECTORS["ticket_price"])
+                if price_el:
+                    game_data["ticket_price"] = (await price_el.inner_text()).strip()
 
-            # Top prizes remaining
-            remaining_el = await row.query_selector(GENERAL_LEVEL_SELECTORS["top_prizes_remaining"])
-            if remaining_el:
-                game_data["top_prizes_remaining"] = (await remaining_el.inner_text()).strip()
+                # Top prize
+                top_prize_el = await row.query_selector(GENERAL_LEVEL_SELECTORS["top_prize"])
+                if top_prize_el:
+                    game_data["top_prize"] = (await top_prize_el.inner_text()).strip()
 
-            # Visit individual page for overall odds
-            if "url" in game_data:
-                print(f"🔍 Visiting: {game_data['url']}")
-                detail_page = await browser.new_page()
-                await detail_page.goto(game_data["url"])
-                overall_odds = await extract_overall_odds(detail_page)
-                await detail_page.close()
-                game_data["overall_odds"] = overall_odds
+                # Top prizes remaining
+                remaining_el = await row.query_selector(GENERAL_LEVEL_SELECTORS["top_prizes_remaining"])
+                if remaining_el:
+                    game_data["top_prizes_remaining"] = (await remaining_el.inner_text()).strip()
 
-            all_data.append(game_data)
+                # Visit individual page for overall odds
+                if "url" in game_data:
+                    print(f"🔍 Visiting: {game_data['url']}")
+                    try:
+                        detail_page = await browser.new_page()
+                        await detail_page.goto(game_data["url"], timeout=60000, wait_until="domcontentloaded")
+                        overall_odds = await extract_overall_odds(detail_page)
+                        game_data["overall_odds"] = overall_odds
+                        await detail_page.close()
+                    except Exception as e:
+                        print(f"⚠️ Failed to retrieve odds for {game_data['url']}: {e}")
+                        game_data["overall_odds"] = None
+
+                all_data.append(game_data)
+
+            except Exception as e:
+                print(f"❌ Skipping row due to error: {e}")
+                continue
 
         await browser.close()
 
