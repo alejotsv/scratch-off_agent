@@ -4,21 +4,17 @@ import os
 from scratchoff_agent.scratchoff_scraper import fetch_scratchoff_data
 
 OUTPUT_FILE = "data/scratchoff_data.json"
+MAX_GAMES = None  # Change this to None to scrape all games
 
 async def main():
-    # Ask user whether to refresh the data
-    refresh = False
-    if os.path.exists(OUTPUT_FILE):
-        user_input = input(f"\n📄 A previous dataset exists at {OUTPUT_FILE}. Do you want to refresh it? (Y/N): ").strip().lower()
-        refresh = user_input == "y"
+    data = await fetch_scratchoff_data(refresh=True, max_games=MAX_GAMES)
 
-    # Fetch data
-    data = await fetch_scratchoff_data(refresh=refresh)
+    if not data:
+        print("⚠️ No data was collected. Exiting without writing file.")
+        return
 
-    # Ensure 'data' directory exists
     os.makedirs("data", exist_ok=True)
 
-    # Write to JSON
     with open(OUTPUT_FILE, "w", encoding="utf-8") as f:
         json.dump(data, f, indent=2, ensure_ascii=False)
 
