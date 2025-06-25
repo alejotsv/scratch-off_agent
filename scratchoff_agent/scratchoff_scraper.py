@@ -8,12 +8,13 @@ load_dotenv()
 
 async def extract_overall_odds(page) -> str:
     selector = PAGE_LEVEL_SELECTORS["overall_odds"]
-    element = await page.query_selector(selector)
+    element = await page.wait_for_selector(selector, timeout=10000)
+
     if element:
         return (await element.inner_text()).strip()
     return None
 
-async def fetch_scratchoff_data(refresh: bool = False) -> list:
+async def fetch_scratchoff_data(refresh: bool = True, max_games: int = None) -> list:
     all_data = []
     async with async_playwright() as p:
         browser = await p.chromium.launch(headless=True)
@@ -29,7 +30,10 @@ async def fetch_scratchoff_data(refresh: bool = False) -> list:
         rows = await page.query_selector_all(GENERAL_LEVEL_SELECTORS["table_row"])
         print(f"\n🎯 Found {len(rows)} ticket rows:\n")
 
-        for row in rows:
+        for index, row in enumerate(rows):
+            if max_games is not None and index >= max_games:
+                break
+
             game_data = {}
 
             try:
@@ -46,6 +50,9 @@ async def fetch_scratchoff_data(refresh: bool = False) -> list:
                         parsed_url = urlparse(full_url)
                         game_id = parse_qs(parsed_url.query).get("id", [None])[0]
                         game_data["id"] = game_id
+
+                    else:
+                        print(f"⚠️ Skipping game {game_data.get('name', '[Unknown]')} due to missing href")
 
                 # Ticket price
                 price_el = await row.query_selector(GENERAL_LEVEL_SELECTORS["ticket_price"])
@@ -74,8 +81,12 @@ async def fetch_scratchoff_data(refresh: bool = False) -> list:
                     except Exception as e:
                         print(f"⚠️ Failed to retrieve odds for {game_data['url']}: {e}")
                         game_data["overall_odds"] = None
+                else:
+                    print("⚠️ Skipping row due to missing URL.")
+                    continue
 
                 all_data.append(game_data)
+
 
             except Exception as e:
                 print(f"❌ Skipping row due to error: {e}")
