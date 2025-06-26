@@ -9,5 +9,6 @@ GENERAL_LEVEL_SELECTORS = {
 
 PAGE_LEVEL_SELECTORS = {
     "overall_odds": "//div[contains(@class, 'cmp-infolist__item-title') and text()='Overall Odds']/following-sibling::div/p",
-    "odds_table_rows": "//table[contains(@class, 'font-sans-tds')]//tbody/tr"
+    "odds_table_rows": "//table[contains(@class, 'font-sans-tds')]//tbody/tr",
+    "prize_breakdown": "tbody tr.row-rounded"
 }
