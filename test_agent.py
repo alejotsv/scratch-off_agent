@@ -15,14 +15,14 @@ def display_games(games):
         if "odds_breakdown" in game:
             print("🔍 Odds Breakdown:")
             for prize in game["odds_breakdown"]:
-                print(f"  - ${prize['prize']}: 1 in {prize['odds']} ({prize['remaining']} left)")
+                print(f"  - ${prize['prize']}: {prize['odds']} ({prize['remaining']} left)")
 
 def display_prize_odds(prizes):
     for entry in prizes:
         print(f"\n🎟️ Game: {entry['game']} (ID: {entry['game_id']})")
         print(f"💵 Ticket Price: ${entry['ticket_price']}")
         print(f"🏆 Prize: ${entry['prize']}")
-        print(f"📊 Odds: 1 in {entry['odds']}")
+        print(f"📊 Odds: {entry['odds']}")
         print(f"🔢 Remaining: {entry['remaining']}")
 
 def main():
