@@ -1,7 +1,7 @@
 from fastapi import FastAPI, Query
 from pydantic import BaseModel
 from typing import Optional
-from scratchoff_agent.agent import ScratchoffQAAgent
+from scratchoff_agent.odds_agent import ScratchoffQAAgent
 import os
 
 app = FastAPI()

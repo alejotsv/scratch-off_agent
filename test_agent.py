@@ -1,4 +1,4 @@
-from scratchoff_agent.agent import ScratchoffQAAgent
+from scratchoff_agent.odds_agent import ScratchoffQAAgent
 
 # Path to your JSON data file
 DATA_PATH = "data/scratchoff_data.json"
