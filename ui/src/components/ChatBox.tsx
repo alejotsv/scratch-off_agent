@@ -1,5 +1,3 @@
-import React from 'react';
-
 const ChatBox = ({ onStop }: { onStop: () => void }) => {
   return (
     <div className="flex flex-col justify-center items-center bg-white h-[100vh]">
