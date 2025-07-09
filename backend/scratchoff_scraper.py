@@ -2,7 +2,7 @@ import os
 from urllib.parse import urlparse, parse_qs
 from dotenv import load_dotenv
 from playwright.async_api import async_playwright
-from selectors.ticket_page import GENERAL_LEVEL_SELECTORS, PAGE_LEVEL_SELECTORS
+from page_selectors.ticket_page import GENERAL_LEVEL_SELECTORS, PAGE_LEVEL_SELECTORS
 
 load_dotenv()
 
