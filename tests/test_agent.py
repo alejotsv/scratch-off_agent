@@ -1,7 +1,7 @@
 from backend.odds_agent import ScratchoffQAAgent
 
 # Path to your JSON data file
-DATA_PATH = "data/scratchoff_data.json"
+DATA_PATH = "../data/scratchoff_data.json"
 
 def display_games(games):
     for game in games:
