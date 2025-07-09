@@ -6,9 +6,9 @@ from pydantic import BaseModel
 from fastapi.responses import JSONResponse
 from fastapi.middleware.cors import CORSMiddleware
 
-from scratchoff_agent.decision_engine import parse_user_goal_with_claude
-from scratchoff_agent.nlg_agent import summarize_recommendation
-from scratchoff_agent.odds_agent import ScratchoffQAAgent
+from backend.decision_engine import parse_user_goal_with_claude
+from backend.nlg_agent import summarize_recommendation
+from backend.odds_agent import ScratchoffQAAgent
 import os
 
 load_dotenv()

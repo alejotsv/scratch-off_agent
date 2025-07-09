@@ -1,7 +1,7 @@
 import asyncio
 import json
 import os
-from scratchoff_agent.scratchoff_scraper import fetch_scratchoff_data
+from backend.scratchoff_scraper import fetch_scratchoff_data
 
 OUTPUT_FILE = "data/scratchoff_data.json"
 MAX_GAMES = None  # Change this to None to scrape all games

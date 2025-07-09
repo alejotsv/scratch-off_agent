@@ -1,6 +1,6 @@
 import json
 
-from scratchoff_agent.nlg_agent import bedrock, CLAUDE_MODEL_ID
+from backend.nlg_agent import bedrock, CLAUDE_MODEL_ID
 
 
 def parse_user_goal_with_claude(question: str) -> dict:

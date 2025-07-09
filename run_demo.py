@@ -1,7 +1,7 @@
 import json
 
-from scratchoff_agent.odds_agent import ScratchoffQAAgent
-from scratchoff_agent.nlg_agent import summarize_recommendation
+from backend.odds_agent import ScratchoffQAAgent
+from backend.nlg_agent import summarize_recommendation
 
 DATA_FILE = "data/scratchoff_data.json"
 
