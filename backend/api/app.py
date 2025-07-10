@@ -13,13 +13,11 @@ import os
 
 load_dotenv()
 
-ui_url = os.getenv("UI_URL")
-
 app = FastAPI()
 
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=[ui_url],
+    allow_origins=[os.getenv("UI_URL")],
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
