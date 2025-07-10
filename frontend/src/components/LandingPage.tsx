@@ -30,9 +30,16 @@ const LandingPage = ({ onStart }: { onStart: () => void }) => {
 
             <div className="mt-5 max-w-3xl">
               <p className="text-lg text-gray-600 dark:text-gray-400">
-                {/* Describe how Scratchy is a tool that uses a Flask API and an agentic system with Bedrock */}
                 Scratchy is your AI-powered lottery companion, built with Amazon Bedrock and agentic AI patterns. Leveraging real-time odds and custom filters, it helps you make smarter, data-driven ticket selections.
               </p>
+              <div className="mt-10 mb-10 text-sm text-gray-700 dark:text-gray-300">
+                <p className="font-semibold mb-2">💬 Try asking:</p>
+                <ul className="list-disc list-inside space-y-1">
+                  <li>What are the best $5 scratch-offs with top prizes?</li>
+                  <li>Show me tickets under $20 with good odds</li>
+                  <li>Which games still have top prizes left?</li>
+                </ul>
+              </div>
             </div>
 
             {/* Buttons */}

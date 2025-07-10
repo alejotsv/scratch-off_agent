@@ -57,12 +57,15 @@ const ChatBox = ({ onStop }: { onStop: () => void }) => {
 
   return (
     <div className="flex flex-col justify-center items-center bg-white h-[100vh] text-zinc-900 px-4">
+      <h2 className="text-lg font-medium text-center text-orange-600">
+        Enter your lottery odds question
+      </h2>
       <div className="w-full max-w-xl mt-10 flex items-center gap-2">
         <input
           type="text"
           value={userInput}
           onChange={handleInputChange}
-          placeholder="Ask Scratchy..."
+          placeholder="e.g. What are the best $10 tickets with prizes remaining?"
           className="flex-grow border border-orange-300 p-3 rounded-md focus:outline-none focus:ring-2 focus:ring-orange-400"
         />
         <button
